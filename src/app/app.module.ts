@@ -10,6 +10,8 @@ import { TabsPage } from '../pages/tabs/tabs';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
+import { BLE } from '@ionic-native/ble';
+import { BluetoothSerial } from "@ionic-native/bluetooth-serial";
 
 @NgModule({
   declarations: [
@@ -34,6 +36,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
   providers: [
     StatusBar,
     SplashScreen,
+    BluetoothSerial,
+    BLE,
     {provide: ErrorHandler, useClass: IonicErrorHandler}
   ]
 })

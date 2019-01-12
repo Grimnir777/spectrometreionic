@@ -1,17 +1,37 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>Home</ion-title>
-  </ion-navbar>
-</ion-header>
+    <ion-navbar>
+      <ion-title>
+        Bluetooth Connection
+      </ion-title>
+    </ion-navbar>
+  </ion-header>
+  
+  <ion-content padding>
+    <button ion-button full class="submit-button" (click)="listPairedDevices()">
+      <ion-icon name="refresh"></ion-icon>&nbsp;Refresh Bluetooth Devices
+    </button>
 
-<ion-content padding>
-  <h2>Welcome to Ionic!</h2>
-  <p>
-    This starter project comes with simple tabs-based layout for apps
-    that are going to primarily use a Tabbed UI.
-  </p>
-  <p>
-    Take a look at the <code>src/pages/</code> directory to add or change tabs,
-    update any existing page or create new pages.
-  </p>
-</ion-content>
+    <ion-row>
+      <ion-col>
+        <ion-list radio-group [(ngModel)]="pairedDeviceID" *ngIf="listToggle">
+          <ion-item *ngFor="let i of pairedList;let j=index">
+            <ion-label>{{i.name}}</ion-label>
+            <ion-radio value="{{j}}" ></ion-radio>
+          </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+
+    <button ion-button full class="submit-button" *ngIf="listToggle" (click)="selectDevice()">
+      <ion-icon name="bluetooth"></ion-icon>&nbsp;Connect Bluetooth Devices
+    </button>
+
+    <button ion-button full class="submit-button" (click)="startAcquisition()">
+      <ion-icon name="send"></ion-icon>&nbsp;Start Acquisition
+    </button>
+
+    <ion-item>
+      <ion-textarea placeholder="{{dataReceived}}"></ion-textarea>
+    </ion-item>
+
+  </ion-content>
