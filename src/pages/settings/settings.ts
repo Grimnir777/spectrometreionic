@@ -4,10 +4,10 @@ import { BluetoothSerial } from "@ionic-native/bluetooth-serial";
 
 
 @Component({
-  selector: 'page-home',
-  templateUrl: 'home.html'
+  selector: 'page-settings',
+  templateUrl: 'settings.html'
 })
-export class HomePage {
+export class SettingsPage {
   pairedList : pairedlist;
   listToggle : boolean = false;
   pairedDeviceID : number = 0;
