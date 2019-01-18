@@ -7,5 +7,100 @@
 </ion-header>
 
 <ion-content padding>
+  <button ion-button full class="submit-button" *ngIf="isConnected" (click)="startAcquisition()">
+    <ion-icon name="send"></ion-icon>Lancer une nouvelle acquisition
+  </button>
+  <p *ngIf="!isConnected">{{errorMsg}}</p>
 
+
+  <button ion-button full class="submit-button"(click)="startAcquisition2()">
+    <ion-icon name="send"></ion-icon>Nouvelle acquisition
+  </button>
+
+  <button ion-button full class="submit-button"(click)="saveSpecter()">
+    <ion-icon name="star"></ion-icon>Sauvegarder
+  </button>
+
+  <ion-card>
+    <ion-card-content>
+      <canvas #lineCanvas></canvas>
+
+        <svg
+        xmlns:dc="http://purl.org/dc/elements/1.1/"
+        xmlns:cc="http://web.resource.org/cc/"
+        xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+        xmlns:svg="http://www.w3.org/2000/svg"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+        xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+        xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+        width="500"
+        height="36"
+        id="svg2"
+        sodipodi:version="0.32"
+        inkscape:version="0.44.1"
+        version="1.0"
+        sodipodi:docbase="D:\Documents and Settings\mineclau\Desktop\brol"
+        sodipodi:docname="spectre.svg"
+        #colorSpecter>
+
+        <defs
+          id="defs4">
+          <linearGradient
+            inkscape:collect="always"
+            id="linearGradient2766"
+            x1="-1.5"
+            y1="18.046823"
+            x2="501.5"
+            y2="18.046823"
+            gradientUnits="userSpaceOnUse"
+          
+          >
+            <stop
+              style="stop-color:red;stop-opacity:1;"
+              offset="0"
+              id="stop2762" />
+            <stop
+              id="stop2772"
+              offset="0.2"
+              style="stop-color:yellow;stop-opacity:1;" />
+            <stop
+              style="stop-color:lime;stop-opacity:1;"
+              offset="0.4025"
+              id="stop2774" />
+            <stop
+              id="stop2776"
+              offset="0.60312498"
+              style="stop-color:aqua;stop-opacity:1;" />
+            <stop
+              style="stop-color:blue;stop-opacity:1;"
+              offset="0.80156249"
+              id="stop2778" />
+            <stop
+              style="stop-color:fuchsia;stop-opacity:1;"
+              offset="1"
+              id="stop2764" />
+          </linearGradient>
+        </defs>
+        <g
+          inkscape:label="Calque 1"
+          inkscape:groupmode="layer"
+          id="layer1">
+          <rect
+            style="fill:url(#linearGradient2766);fill-opacity:1.0;stroke:none;stroke-width:3;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+            id="rect1872"
+            width="500"
+            height="36"
+            x="0"
+            y="0.046822742" />
+        <path id="absorptionPath" d="" #absorptionPath/>
+          
+        </g>
+      </svg>
+
+      
+      
+    </ion-card-content>
+  </ion-card>
+  
 </ion-content>

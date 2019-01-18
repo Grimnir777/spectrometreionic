@@ -12,6 +12,8 @@ import { TabsPage } from '../pages/tabs/tabs';
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { BluetoothSerial } from "@ionic-native/bluetooth-serial";
+import { SaverProvider } from '../providers/saver/saver';
+import { IonicStorageModule } from '@ionic/storage';
 
 @NgModule({
   declarations: [
@@ -24,7 +26,8 @@ import { BluetoothSerial } from "@ionic-native/bluetooth-serial";
   ],
   imports: [
     BrowserModule,
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    IonicStorageModule.forRoot()
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -39,7 +42,8 @@ import { BluetoothSerial } from "@ionic-native/bluetooth-serial";
     StatusBar,
     SplashScreen,
     BluetoothSerial,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    {provide: ErrorHandler, useClass: IonicErrorHandler},
+    SaverProvider
   ]
 })
 export class AppModule {}

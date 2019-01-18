@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://web.resource.org/cc/"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="500"
+   height="36"
+   id="svg2"
+   sodipodi:version="0.32"
+   inkscape:version="0.44.1"
+   version="1.0"
+   sodipodi:docbase="D:\Documents and Settings\mineclau\Desktop\brol"
+   sodipodi:docname="spectre.svg">
+
+  <defs
+     id="defs4">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient2766"
+       x1="-1.5"
+       y1="18.046823"
+       x2="501.5"
+       y2="18.046823"
+       gradientUnits="userSpaceOnUse"
+	   
+	   >
+      <stop
+         style="stop-color:red;stop-opacity:1;"
+         offset="0"
+         id="stop2762" />
+      <stop
+         id="stop2772"
+         offset="0.2"
+         style="stop-color:yellow;stop-opacity:1;" />
+      <stop
+         style="stop-color:lime;stop-opacity:1;"
+         offset="0.4025"
+         id="stop2774" />
+      <stop
+         id="stop2776"
+         offset="0.60312498"
+         style="stop-color:aqua;stop-opacity:1;" />
+      <stop
+         style="stop-color:blue;stop-opacity:1;"
+         offset="0.80156249"
+         id="stop2778" />
+      <stop
+         style="stop-color:fuchsia;stop-opacity:1;"
+         offset="1"
+         id="stop2764" />
+    </linearGradient>
+  </defs>
+ 
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.392"
+     inkscape:cx="250"
+     inkscape:cy="18"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     width="500px"
+     height="36px"
+     inkscape:window-width="1280"
+     inkscape:window-height="1005"
+     inkscape:window-x="-4"
+     inkscape:window-y="-4" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Calque 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <rect
+       style="fill:url(#linearGradient2766);fill-opacity:1.0;stroke:none;stroke-width:3;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       id="rect1872"
+       width="500"
+       height="36"
+       x="0"
+       y="0.046822742" />
+	 <path id="absorptionPath" d="" />
+	   
+  </g>
+</svg>

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController,AlertController,ToastController } from 'ionic-angular';
+import { NavController,ToastController } from 'ionic-angular';
 import { BluetoothSerial } from "@ionic-native/bluetooth-serial";
 
 
@@ -16,7 +16,6 @@ export class SettingsPage {
 
   constructor(
     public navCtrl: NavController,
-    private alertCtrl : AlertController,
     private toastCtrl : ToastController,
     private bluetoothSerial : BluetoothSerial
     ) 
@@ -31,11 +30,11 @@ export class SettingsPage {
         this.pairedList = success;
         this.listToggle = true;
       },error => {
-        this.showError("Please enable Bluetooth");
+        this.showToast("Please enable Bluetooth");
         this.listToggle = false;
       })
     }, error =>{
-      this.showError("Please enable Bluetooth");
+      //this.showToast("Please enable Bluetooth");
     }
     );
   }
@@ -45,16 +44,16 @@ export class SettingsPage {
     let connectedDevice = this.pairedList[this.pairedDeviceID];
     if(!connectedDevice.address)
     {
-      this.showError("Select paired device to connect");
+      this.showToast("Select paired device to connect");
       return;
     }
     let address = connectedDevice.address;
     let name = connectedDevice.name;
     this.bluetoothSerial.connect(address).subscribe(success => {
-      this.showError("Successfully connected");
+      this.showToast("Successfully connected");
     },
     error=>{
-      this.showError("Error : connecting to the device");
+
     })
 
   }
@@ -74,19 +73,9 @@ export class SettingsPage {
       });
       this.showToast("Data received");
     }, error => {
-      this.showError(error)
     });
   }
 
-  //Toast and error message
-  showError(error) {
-    let alert = this.alertCtrl.create({
-      title: 'Error',
-      subTitle: error,
-      buttons: ['Dismiss']
-    });
-    alert.present();
-  }
 
   showToast(msj) {
     const toast = this.toastCtrl.create({
@@ -94,7 +83,6 @@ export class SettingsPage {
       duration: 1000
     });
     toast.present();
-
   }
 
 }

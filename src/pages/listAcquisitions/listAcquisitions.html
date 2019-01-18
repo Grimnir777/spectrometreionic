@@ -7,16 +7,25 @@
 </ion-header>
 
 <ion-content>
-  <ion-list>
-    <ion-list-header>Liste</ion-list-header>
-    <ion-item>
-      Bla
-    </ion-item>
-    <ion-item>
-      Bla
-    </ion-item>
-    <ion-item>
-      Bla
-    </ion-item>
+  <button ion-button full class="submit-button"(click)="createTest()">
+    <ion-icon name="send"></ion-icon>Creation test
+  </button>
+
+
+  <ion-list *ngIf="allSpecters">
+    <ion-item-sliding *ngFor="let specter of allSpecters; let i = index" (click)="openAcq(specter)" #item>
+
+      <ion-item>
+        {{specter.name}}
+      </ion-item>
+
+      <ion-item-options side="right">
+        <button ion-button color="danger" (click)="delete(i)">
+          <ion-icon name="trash"></ion-icon>
+          Supprimer
+        </button>
+      </ion-item-options>
+
+    </ion-item-sliding>
   </ion-list>
 </ion-content>
