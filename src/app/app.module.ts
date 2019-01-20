@@ -14,6 +14,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { BluetoothSerial } from "@ionic-native/bluetooth-serial";
 import { SaverProvider } from '../providers/saver/saver';
 import { IonicStorageModule } from '@ionic/storage';
+import { File } from "@ionic-native/file";
+
 
 @NgModule({
   declarations: [
@@ -42,6 +44,7 @@ import { IonicStorageModule } from '@ionic/storage';
     StatusBar,
     SplashScreen,
     BluetoothSerial,
+    File,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     SaverProvider
   ]

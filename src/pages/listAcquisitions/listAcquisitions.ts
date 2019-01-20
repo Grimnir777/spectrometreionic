@@ -21,28 +21,9 @@ export class ListAcquisitionsPage {
     });
   }
 
-  createTest(){
-    let listValue = [];
-    for (let index = 0; index < 100; index++) {
-      listValue.push( (Math.floor(Math.random() * Math.floor(100)) +(index-30)) );
-    }
-    console.log(listValue);
-    let acDate = Date.now();
-    let newName = 'newSpecter';
-    let newE = {
-      id : newName + acDate,
-      date : acDate,
-      name : newName,
-      listValue : listValue
-    };
-    console.log(newE);
-    this.saver.addSpecter(newE);
-  }
-
   openAcq(specter){
     this.navCtrl.push(AcquisitionPage, {sp : specter});
   }
-
 
   delete(index)
   {
@@ -50,12 +31,5 @@ export class ListAcquisitionsPage {
     this.allSpecters[index] = null;
     this.allSpecters.splice(index,1);
   }
-  /*
-  Modele données
-  date
-  name
-  listValue [{400:50},{401:56},...,{1000:30}]
-  id = name + date
-  */
 
 }

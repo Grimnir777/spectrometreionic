@@ -8,7 +8,7 @@
   
   <ion-content padding>
     <button ion-button full class="submit-button" (click)="listPairedDevices()">
-      <ion-icon name="refresh"></ion-icon>&nbsp;Refresh Bluetooth Devices
+      <ion-icon name="refresh"></ion-icon>&nbsp;Rafraichir la liste des appareils bluetooth
     </button>
 
     <ion-row>
@@ -23,15 +23,7 @@
     </ion-row>
 
     <button ion-button full class="submit-button" *ngIf="listToggle" (click)="selectDevice()">
-      <ion-icon name="bluetooth"></ion-icon>&nbsp;Connect Bluetooth Devices
+      <ion-icon name="bluetooth"></ion-icon>&nbsp;Se connecter à l'appareil sélectionné
     </button>
-
-    <button ion-button full class="submit-button" (click)="startAcquisition()">
-      <ion-icon name="send"></ion-icon>&nbsp;Start Acquisition
-    </button>
-
-    <ion-item>
-      <ion-textarea placeholder="{{dataReceived}}"></ion-textarea>
-    </ion-item>
-
+    
   </ion-content>

@@ -2,6 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams, ToastController, AlertController  } from 'ionic-angular';
 import { BluetoothSerial } from "@ionic-native/bluetooth-serial";
 import { SaverProvider } from "../../providers/saver/saver";
+import { File } from "@ionic-native/file";
 
 
 import { Chart } from 'chart.js';
@@ -34,7 +35,8 @@ export class AcquisitionPage {
     private bluetoothSerial : BluetoothSerial,
     public navParams: NavParams, 
     public saver: SaverProvider,
-    private alertCtrl: AlertController) 
+    private alertCtrl: AlertController,
+    private file: File) 
   {
     
   }
@@ -168,8 +170,6 @@ export class AcquisitionPage {
   });
 
   alert.present();
-  
- 
  }
 
   //simulation of data
@@ -184,10 +184,15 @@ export class AcquisitionPage {
       this.lineChart.data.datasets[0].data.push(data);
       this.lineChart.data.labels.push(index);
       this.lineChart.update();
+      
     }
     this.fillColorSpecter(this.dataReceived);
     //console.log(this.dataReceived);
   }
+
+
+
+  
 
   fillColorSpecter(tabValues){
     this.colorSpecterWidth = this.colorSpecter.nativeElement.getAttribute('width');
@@ -227,6 +232,48 @@ export class AcquisitionPage {
     }, error => {
       this.showToast(error,1000)
     });
+  }
+
+
+  saveAsCsv() {
+    let alert = this.alertCtrl.create({
+      title: 'Sauvegarde du graphe en CSV',
+      message: 'Entrez un nom pour votre fichier csv',
+      inputs: [
+        {
+          name: 'title',
+          placeholder: 'Titre'
+        },
+      ],
+      buttons: [
+        {
+          text: 'Annuler',
+          handler: () => {
+          }
+        },
+        {
+          text: 'Sauvegarder',
+          handler: (data) => {
+
+            if(data.title!=null && data.title!=""){
+              var csv: any = '';
+    
+              for (let index = 0; index < this.nbElements; index++) {
+                csv += index + ";" + this.dataReceived[index] + ";\r\n";
+              }
+              var fileName: any = "test.csv"
+              this.file.writeFile(this.file.externalRootDirectory,fileName,csv).then( () => {
+                  this.showToast("Graphe sauvegardé en csv (Répertoire root)",1000);
+                }).catch(err => {
+                  this.showToast("Erreur pendant la sauvegarde du graphe",1000);
+                });
+            }
+          }
+        }
+      ]
+    });
+  
+    alert.present();
   }
 
   showToast(msj,time) {

@@ -12,7 +12,6 @@ export class CalibrationPage {
   }
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad CalibrationPage');
   }
 
 }

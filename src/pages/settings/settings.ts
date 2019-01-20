@@ -2,11 +2,11 @@ import { Component } from '@angular/core';
 import { NavController,ToastController } from 'ionic-angular';
 import { BluetoothSerial } from "@ionic-native/bluetooth-serial";
 
-
 @Component({
   selector: 'page-settings',
   templateUrl: 'settings.html'
 })
+
 export class SettingsPage {
   pairedList : pairedlist;
   listToggle : boolean = false;
@@ -30,7 +30,7 @@ export class SettingsPage {
         this.pairedList = success;
         this.listToggle = true;
       },error => {
-        this.showToast("Please enable Bluetooth");
+        this.showToast("Veuillez activer le bluetooth");
         this.listToggle = false;
       })
     }, error =>{
@@ -44,13 +44,13 @@ export class SettingsPage {
     let connectedDevice = this.pairedList[this.pairedDeviceID];
     if(!connectedDevice.address)
     {
-      this.showToast("Select paired device to connect");
+      this.showToast("Veuillez choisir un appareil auquel se connecter");
       return;
     }
     let address = connectedDevice.address;
-    let name = connectedDevice.name;
+    //let name = connectedDevice.name;
     this.bluetoothSerial.connect(address).subscribe(success => {
-      this.showToast("Successfully connected");
+      this.showToast("Connexion réussie");
     },
     error=>{
 
@@ -61,21 +61,8 @@ export class SettingsPage {
   //onDisconnected
   deviceDisconnected() {
     this.bluetoothSerial.disconnect();
-    this.showToast("Device Disconnected");
+    this.showToast("Appareil déconnecté");
   }
-
-  
-  startAcquisition(){
-    this.bluetoothSerial.write("acq").then(success => {
-      this.bluetoothSerial.readUntil('\n').then((data: any) => {
-        this.dataReceived = data;
-        this.bluetoothSerial.clear();
-      });
-      this.showToast("Data received");
-    }, error => {
-    });
-  }
-
 
   showToast(msj) {
     const toast = this.toastCtrl.create({

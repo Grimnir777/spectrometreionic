@@ -7,19 +7,24 @@
 </ion-header>
 
 <ion-content padding>
-  <button ion-button full class="submit-button" *ngIf="isConnected" (click)="startAcquisition()">
+  <button ion-button full class="submit-button" *ngIf="isConnected && isNewAcquisition" (click)="startAcquisition()">
     <ion-icon name="send"></ion-icon>Lancer une nouvelle acquisition
   </button>
-  <p *ngIf="!isConnected">{{errorMsg}}</p>
+  <p *ngIf="!isConnected && !isNewAcquisition">{{errorMsg}}</p>
 
 
   <button ion-button full class="submit-button"(click)="startAcquisition2()">
     <ion-icon name="send"></ion-icon>Nouvelle acquisition
   </button>
 
-  <button ion-button full class="submit-button"(click)="saveSpecter()">
+  <button ion-button full class="submit-button"  (click)="saveSpecter()">
     <ion-icon name="star"></ion-icon>Sauvegarder
   </button>
+
+  <button ion-button full class="submit-button" (click)="saveAsCsv()">
+    <ion-icon name="star"></ion-icon>Sauvegarder en CSV
+  </button>
+
 
   <ion-card>
     <ion-card-content>

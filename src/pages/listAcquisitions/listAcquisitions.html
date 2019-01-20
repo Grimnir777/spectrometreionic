@@ -7,11 +7,6 @@
 </ion-header>
 
 <ion-content>
-  <button ion-button full class="submit-button"(click)="createTest()">
-    <ion-icon name="send"></ion-icon>Creation test
-  </button>
-
-
   <ion-list *ngIf="allSpecters">
     <ion-item-sliding *ngFor="let specter of allSpecters; let i = index" (click)="openAcq(specter)" #item>
 
