@@ -8,11 +8,13 @@ import { BluetoothSerial } from "@ionic-native/bluetooth-serial";
 })
 
 export class SettingsPage {
-  pairedList : pairedlist;
   listToggle : boolean = false;
+  pairedList : pairedlist;
   pairedDeviceID : number = 0;
-  dataSend : string = "";
-  dataReceived : string ="";
+  unpairedList : pairedlist;
+  unpairedDeviceID : number = 0;
+
+  bluetoothOn : boolean = false;
 
   constructor(
     public navCtrl: NavController,
@@ -23,20 +25,43 @@ export class SettingsPage {
     this.checkBluetoothEnable();
   }
 
+  enableBluetooth()
+  {
+    this.bluetoothSerial.enable().then(success =>{
+      this.showToast("Activation du bluetooth réussie");
+      this.bluetoothOn = true;
+      this.checkBluetoothEnable();
+    },error => {
+      this.showToast("Activation du bluetooth impossible");
+      this.bluetoothOn = false;
+    })
+  }
+
   //At initialization
   checkBluetoothEnable(){
     this.bluetoothSerial.isEnabled().then(success =>{
+      this.bluetoothOn = true;
       this.bluetoothSerial.list().then(success=>{
         this.pairedList = success;
         this.listToggle = true;
       },error => {
-        this.showToast("Veuillez activer le bluetooth");
+        this.showToast("Erreur pendant le chargement des appareils");
         this.listToggle = false;
       })
     }, error =>{
-      //this.showToast("Please enable Bluetooth");
+      this.bluetoothOn = false;
+      this.showToast("Veuillez activer le bluetooth");
     }
     );
+  }
+
+  scanForUnpaired()
+  {
+    this.bluetoothSerial.discoverUnpaired().then(success=>{
+      this.unpairedList = success;
+    },error => {
+      this.showToast("Erreur pendant le scan");
+    })
   }
 
   //onClick device
@@ -53,9 +78,26 @@ export class SettingsPage {
       this.showToast("Connexion réussie");
     },
     error=>{
-
+      this.showToast("Connexion impossible");
     })
+  }
 
+  //onClick device
+  selectDeviceUnpaired(){
+    let connectedDevice = this.unpairedDeviceID[this.unpairedDeviceID];
+    if(!connectedDevice.address)
+    {
+      this.showToast("Veuillez choisir un appareil auquel se connecter");
+      return;
+    }
+    let address = connectedDevice.address;
+    let name = connectedDevice.name;
+    this.bluetoothSerial.connect(address).subscribe(success => {
+      this.showToast("Connexion réussie à : " + name);
+    },
+    error=>{
+      this.showToast("Connexion impossible");
+    })
   }
 
   //onDisconnected

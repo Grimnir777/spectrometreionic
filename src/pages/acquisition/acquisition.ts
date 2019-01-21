@@ -1,11 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams, ToastController, AlertController  } from 'ionic-angular';
 import { BluetoothSerial } from "@ionic-native/bluetooth-serial";
-import { SaverProvider } from "../../providers/saver/saver";
 import { File } from "@ionic-native/file";
 
-
 import { Chart } from 'chart.js';
+
+import { SaverProvider } from "../../providers/saver/saver";
 
 @Component({
   selector: 'page-acquisition',
@@ -19,7 +19,9 @@ export class AcquisitionPage {
   errorMsg : string = "Aucune erreur";
   isConnected : boolean = false;
 
-  isNewAcquisition : boolean;
+  isSaved : boolean;
+  isNewAcq : boolean;
+  pageTitle : string;
 
   lineChart: any;
   dataReceived : any;
@@ -38,7 +40,6 @@ export class AcquisitionPage {
     private alertCtrl: AlertController,
     private file: File) 
   {
-    
   }
   
   ionViewWillEnter(){
@@ -48,63 +49,25 @@ export class AcquisitionPage {
       this.isConnected = false;
       this.errorMsg = "Veuillez vous connecter au module bluetooth dans la page paramètres";
     });
-    
   }
+
   ionViewDidLoad() {
-    this.lineChart = new Chart(this.lineCanvas.nativeElement, {
-      type: 'line',
-      data: {
-        labels: [],
-        datasets: [
-            {
-                label: "My First dataset",
-                fill: false,
-                lineTension: 0.1,
-                backgroundColor: "rgba(75,192,192,0.4)",
-                borderColor: "rgba(75,192,192,1)",
-                borderCapStyle: 'butt',
-                borderDash: [],
-                borderDashOffset: 0.0,
-                borderJoinStyle: 'miter',
-                pointBorderColor: "rgba(75,192,192,1)",
-                pointBackgroundColor: "#fff",
-                pointBorderWidth: 1,
-                pointHoverRadius: 5,
-                pointHoverBackgroundColor: "rgba(75,192,192,1)",
-                pointHoverBorderColor: "rgba(220,220,220,1)",
-                pointHoverBorderWidth: 2,
-                pointRadius: 1,
-                pointHitRadius: 10,
-                data: [],
-                spanGaps: false,
-            }
-        ]
-      },
-      options: {
-        scales: {
-          xAxes: [{
-            ticks: {
-              min: 0,
-              max: 500,
-              stepSize: 100
-            }
-          }]
-        }
-      }
-    });
+    this.initGraph();
 
     this.specterData = this.navParams.get('sp');
     if(this.specterData!=null)
     {
-      this.isNewAcquisition = true;
       this.dataReceived = this.specterData.listValue;
       console.log(this.specterData);
       this.fillGraph();
-
-
+      this.pageTitle = this.specterData.name;
+      this.isSaved = true;
+      this.isNewAcq = false;
     }
     else{
-      this.isNewAcquisition = false;
+      this.isNewAcq = true;      
+      this.isSaved = false;
+      this.pageTitle = "Nouvelle acquisition";
     }
 
     //console.log(this.colorSpecter.nativeElement.getAttribute('width'));
@@ -113,19 +76,73 @@ export class AcquisitionPage {
     //this.absorptionPath.nativeElement.setAttribute('d',"M150 0 L150 36 L200 36 L 200 0 Z M250 0 L250 36 L350 36 L 350 0 Z");
  }
 
+ initGraph(){
+  this.lineChart = new Chart(this.lineCanvas.nativeElement, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [
+          {
+              fill: false,
+              lineTension: 0.1,
+              backgroundColor: "rgba(75,192,192,0.4)",
+              borderColor: "rgba(75,192,192,1)",
+              borderCapStyle: 'butt',
+              borderDash: [],
+              borderDashOffset: 0.0,
+              borderJoinStyle: 'miter',
+              pointBorderColor: "rgba(75,192,192,1)",
+              pointBackgroundColor: "#fff",
+              pointBorderWidth: 1,
+              pointHoverRadius: 5,
+              pointHoverBackgroundColor: "rgba(75,192,192,1)",
+              pointHoverBorderColor: "rgba(220,220,220,1)",
+              pointHoverBorderWidth: 2,
+              pointRadius: 1,
+              pointHitRadius: 10,
+              data: [],
+              spanGaps: false,
+          }
+      ]
+    },
+    options: {
+      scales: {
+        xAxes: [{
+          ticks: {
+            min: 0,
+            max: 500,
+            stepSize: 100
+          }
+        }]
+      }
+    }
+  });
+ }
 
  fillGraph(){
-  this.lineChart.data.datasets[0].data=[];
-  this.lineChart.data.labels=[];
-
-  for (let index = 0; index < this.nbElements; index++) {
-
-    this.lineChart.data.datasets[0].data.push(this.dataReceived[index]);
-    this.lineChart.data.labels.push(index);
+  for (let index = 0; index < this.dataReceived.length; index++) {
+    this.lineChart.data.datasets[0].data[index] = this.dataReceived[index];
+    this.lineChart.data.labels[index] = index;
     this.lineChart.update();
   }
-  this.fillColorSpecter(this.dataReceived);
+  this.fillColorSpecter();
  }
+
+ fillColorSpecter(){
+    this.colorSpecterWidth =  this.colorSpecter.nativeElement.getAttribute('viewBox').split(" ")[2];
+    let pas = this.colorSpecterWidth / this.dataReceived.length;
+    console.log(pas);
+    let newPath = "";
+
+    for (let i = 0; i < this.dataReceived.length; i++) {
+      if(this.dataReceived[i]>this.seuil)
+      {
+        newPath += "M" + i*pas + " 0 L" + i*pas + " 36 L" + (i+1)*pas +  " 36 L " + (i+1)*pas +" 0 Z";
+      }
+    }
+
+    this.absorptionPath.nativeElement.setAttribute('d',newPath);
+  }
 
 
 
@@ -159,9 +176,11 @@ export class AcquisitionPage {
               name : newName,
               listValue : this.dataReceived
             };
+            this.specterData = newSpecter;
             console.log(newSpecter);
             this.saver.addSpecter(newSpecter);
-            this.showToast("Votre graphe (" + data.title + ") a bien été sauvegardé",2500) 
+            this.showToast("Votre graphe (" + data.title + ") a bien été sauvegardé",2500);
+            this.isSaved = true;
           }
           
         }
@@ -172,66 +191,46 @@ export class AcquisitionPage {
   alert.present();
  }
 
-  //simulation of data
-  startAcquisition2(){
-    this.dataReceived = [];
-    this.lineChart.data.datasets[0].data=[];
-    this.lineChart.data.labels=[];
+  // //simulation of data
+  // startAcquisition2(){
+  //   this.dataReceived = [];
+  //   //this.lineChart.data.datasets[0].data=[];
+  //   //this.lineChart.data.labels=[];
     
-    for (let index = 0; index < this.nbElements; index++) {
-      let data = (Math.floor(Math.random() * Math.floor(100)) +(index-30));
-      this.dataReceived.push(data);
-      this.lineChart.data.datasets[0].data.push(data);
-      this.lineChart.data.labels.push(index);
-      this.lineChart.update();
+  //   for (let index = 0; index < this.nbElements; index++) {
+  //     let data = (Math.floor(Math.random() * Math.floor(100)) +(index-30));
+  //     this.dataReceived.push(data);
+  //     //this.lineChart.data.datasets[0].data.push(data);
+  //     //this.lineChart.data.labels.push(index);
+  //     this.lineChart.data.datasets[0].data[index] = data;
+  //     this.lineChart.data.labels[index] = index;
+  //     this.lineChart.update();
       
-    }
-    this.fillColorSpecter(this.dataReceived);
-    //console.log(this.dataReceived);
-  }
+  //   }
+  //   this.fillColorSpecter();
+  //   //console.log(this.dataReceived);
+  // }
 
-
-
-  
-
-  fillColorSpecter(tabValues){
-    this.colorSpecterWidth = this.colorSpecter.nativeElement.getAttribute('width');
-    let pas = this.colorSpecterWidth / this.nbElements;
-
-    let newPath = "";
-
-    for (let i = 0; i < tabValues.length; i++) {
-      if(tabValues[i]>this.seuil)
-      {
-        //M150 0 L150 36 L200 36 L 200 0 Z M250 0 L250 36 L350 36 L 350 0 Z
-        newPath += "M" + i*pas + " 0 L" + i*pas + " 36 L" + (i+1)*pas +  " 36 L " + (i+1)*pas +" 0 Z";
-      }
-      
-    }
-
-    this.absorptionPath.nativeElement.setAttribute('d',newPath);
-
-  }
 
   startAcquisition(){
     this.bluetoothSerial.write("acq").then(success => {
       this.bluetoothSerial.readUntil('\n').then((data: any) => {
+        console.log(data);
         this.dataReceived = data.split(',');
         console.log(this.dataReceived);
-
-        this.dataReceived.forEach(function (value, i) {
-          this.lineChart.data.datasets[0].data.push(parseFloat(value));
-          this.lineChart.data.labels.push(i);
-          this.lineChart.update();
-
+        this.dataReceived.forEach(function(element) {
+          element = parseFloat(element);
         });
+        console.log(this.dataReceived);
 
         this.bluetoothSerial.clear();
+        this.fillGraph();
       });
       this.showToast("Data received",1000);
     }, error => {
       this.showToast(error,1000)
     });
+    
   }
 
 
@@ -242,7 +241,8 @@ export class AcquisitionPage {
       inputs: [
         {
           name: 'title',
-          placeholder: 'Titre'
+          placeholder: 'Titre',
+          value : this.specterData.name
         },
       ],
       buttons: [
@@ -261,7 +261,7 @@ export class AcquisitionPage {
               for (let index = 0; index < this.nbElements; index++) {
                 csv += index + ";" + this.dataReceived[index] + ";\r\n";
               }
-              var fileName: any = "test.csv"
+              var fileName: any = data.title + ".csv"
               this.file.writeFile(this.file.externalRootDirectory,fileName,csv).then( () => {
                   this.showToast("Graphe sauvegardé en csv (Répertoire root)",1000);
                 }).catch(err => {
