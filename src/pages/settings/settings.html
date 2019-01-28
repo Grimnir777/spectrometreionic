@@ -40,13 +40,13 @@
         </ion-col>
       </ion-row>
 
-      <button ion-button full class="submit-button" (click)="selectDevice()">
-        <ion-icon name="bluetooth"></ion-icon>&nbsp;Se connecter à l'appareil sélectionné (unpaired)
-      </button>
-  
       <button ion-button full class="submit-button" *ngIf="listToggle" (click)="selectDevice()">
         <ion-icon name="bluetooth"></ion-icon>&nbsp;Se connecter à l'appareil sélectionné
       </button>
+      <button ion-button full class="submit-button" (click)="selectDeviceUnpaired()">
+        <ion-icon name="bluetooth"></ion-icon>&nbsp;Se connecter à l'appareil sélectionné (unpaired)
+      </button>
+  
     </div>
     
     
