@@ -215,7 +215,7 @@ export class AcquisitionPage {
 
 
   startAcquisition(){
-    let loading = this.loadingCtrl.create({
+    var loading = this.loadingCtrl.create({
       spinner: 'crescent',
       content: 'Acquisition en cours ...'
     });

@@ -13,7 +13,7 @@
     </button>
 
     <div *ngIf="bluetoothOn">
-      <button ion-button full class="submit-button" (click)="scanForUnpaired()">
+      <!-- <button ion-button full class="submit-button" (click)="scanForUnpaired()">
         Ajout d'un nouvel appareil
       </button>
       <p>Unpaired</p>
@@ -26,7 +26,7 @@
             </ion-item>
           </ion-list>
         </ion-col>
-      </ion-row>
+      </ion-row> -->
 
       <p>paired</p>
       <ion-row>
@@ -43,9 +43,9 @@
       <button ion-button full class="submit-button" *ngIf="listToggle" (click)="selectDevice()">
         <ion-icon name="bluetooth"></ion-icon>&nbsp;Se connecter à l'appareil sélectionné
       </button>
-      <button ion-button full class="submit-button" (click)="selectDeviceUnpaired()">
+      <!-- <button ion-button full class="submit-button" (click)="selectDeviceUnpaired()">
         <ion-icon name="bluetooth"></ion-icon>&nbsp;Se connecter à l'appareil sélectionné (unpaired)
-      </button>
+      </button> -->
   
     </div>
     

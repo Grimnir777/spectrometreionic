@@ -4,6 +4,7 @@ import { Observable } from 'rxjs/Observable';
 
 
 const ALL_SPECTERS_DATA_KEY = 'allSpecters';
+const CALIB_VALUES_DATA_KEY = 'calibValues';
 
 @Injectable()
 export class SaverProvider {
@@ -85,6 +86,27 @@ export class SaverProvider {
       }
     });
 
+  }
+
+  public getCalibValues(){
+    return new Observable<any>(obs => {
+      this.storage.get(CALIB_VALUES_DATA_KEY).then(data =>{
+        if(data)
+        {
+          var calibValues = JSON.parse(data);
+          obs.next(calibValues);
+          obs.complete();
+        }
+        else
+        {
+          console.log("error");
+          obs.complete();
+        }
+      });
+    });
+  }
+  public setCalibValues(calibValues : any){
+    this.storage.set(CALIB_VALUES_DATA_KEY,JSON.stringify(calibValues));
   }
 
 }

@@ -67,7 +67,7 @@ export class SettingsPage {
 
   //onClick device
   selectDevice(){
-    let loading = this.loadingCtrl.create({
+    var loading = this.loadingCtrl.create({
       spinner: 'crescent',
       content: 'Connexion en cours'
     });
@@ -85,9 +85,8 @@ export class SettingsPage {
 
     
     this.bluetoothSerial.connect(address).subscribe(success => {
-      loading.setContent("Connexion réussie");
-      loading.setDuration(1000);
-      //this.showToast("Connexion réussie");
+      loading.dismiss();
+      this.showToast("Connexion réussie");
     },
     error=>{
       this.showToast("Connexion impossible");

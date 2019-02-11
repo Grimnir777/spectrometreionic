@@ -11,7 +11,7 @@
     <ion-item-sliding *ngFor="let specter of allSpecters; let i = index" (click)="openAcq(specter)" #item>
 
       <ion-item>
-        {{specter.name}}
+        {{specter.name}} {{specter.date}}
       </ion-item>
 
       <ion-item-options side="right">
