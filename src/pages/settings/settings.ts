@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController,ToastController, LoadingController } from 'ionic-angular';
+import { NavController,ToastController } from 'ionic-angular';
 import { BluetoothSerial } from "@ionic-native/bluetooth-serial";
 
 @Component({
@@ -19,8 +19,7 @@ export class SettingsPage {
   constructor(
     public navCtrl: NavController,
     private toastCtrl : ToastController,
-    private bluetoothSerial : BluetoothSerial,
-    public loadingCtrl: LoadingController
+    private bluetoothSerial : BluetoothSerial
     ) 
   {
     this.checkBluetoothEnable();
@@ -67,13 +66,6 @@ export class SettingsPage {
 
   //onClick device
   selectDevice(){
-    var loading = this.loadingCtrl.create({
-      spinner: 'crescent',
-      content: 'Connexion en cours'
-    });
-
-    loading.present();
-
     let connectedDevice = this.pairedList[this.pairedDeviceID];
     if(!connectedDevice.address)
     {
@@ -82,10 +74,7 @@ export class SettingsPage {
     }
     let address = connectedDevice.address;
     //let name = connectedDevice.name;
-
-    
     this.bluetoothSerial.connect(address).subscribe(success => {
-      loading.dismiss();
       this.showToast("Connexion réussie");
     },
     error=>{

@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams, ToastController, AlertController, LoadingController  } from 'ionic-angular';
+import { NavController, NavParams, ToastController, AlertController  } from 'ionic-angular';
 import { BluetoothSerial } from "@ionic-native/bluetooth-serial";
 import { File } from "@ionic-native/file";
 
@@ -38,8 +38,7 @@ export class AcquisitionPage {
     public navParams: NavParams, 
     public saver: SaverProvider,
     private alertCtrl: AlertController,
-    private file: File,
-    public loadingCtrl: LoadingController) 
+    private file: File) 
   {
   }
   
@@ -83,27 +82,27 @@ export class AcquisitionPage {
     data: {
       labels: [],
       datasets: [
-        {
-            fill: false,
-            lineTension: 0.1,
-            backgroundColor: "rgba(75,192,192,0.4)",
-            borderColor: "rgba(75,192,192,1)",
-            borderCapStyle: 'butt',
-            borderDash: [],
-            borderDashOffset: 0.0,
-            borderJoinStyle: 'miter',
-            pointBorderColor: "rgba(75,192,192,1)",
-            pointBackgroundColor: "#fff",
-            pointBorderWidth: 1,
-            pointHoverRadius: 5,
-            pointHoverBackgroundColor: "rgba(75,192,192,1)",
-            pointHoverBorderColor: "rgba(220,220,220,1)",
-            pointHoverBorderWidth: 2,
-            pointRadius: 1,
-            pointHitRadius: 10,
-            data: [],
-            spanGaps: false,
-        }
+          {
+              fill: false,
+              lineTension: 0.1,
+              backgroundColor: "rgba(75,192,192,0.4)",
+              borderColor: "rgba(75,192,192,1)",
+              borderCapStyle: 'butt',
+              borderDash: [],
+              borderDashOffset: 0.0,
+              borderJoinStyle: 'miter',
+              pointBorderColor: "rgba(75,192,192,1)",
+              pointBackgroundColor: "#fff",
+              pointBorderWidth: 1,
+              pointHoverRadius: 5,
+              pointHoverBackgroundColor: "rgba(75,192,192,1)",
+              pointHoverBorderColor: "rgba(220,220,220,1)",
+              pointHoverBorderWidth: 2,
+              pointRadius: 1,
+              pointHitRadius: 10,
+              data: [],
+              spanGaps: false,
+          }
       ]
     },
     options: {
@@ -122,11 +121,11 @@ export class AcquisitionPage {
 
  fillGraph(){
   for (let index = 0; index < this.dataReceived.length; index++) {
-    this.lineChart.data.datasets[0].data[index] = this.dataReceived[index].valeur_lu;
-    this.lineChart.data.labels[index] = this.dataReceived[index].longueur_onde_lu;
+    this.lineChart.data.datasets[0].data[index] = this.dataReceived[index];
+    this.lineChart.data.labels[index] = index;
     this.lineChart.update();
   }
-  //this.fillColorSpecter();
+  this.fillColorSpecter();
  }
 
  fillColorSpecter(){
@@ -136,7 +135,7 @@ export class AcquisitionPage {
     let newPath = "";
 
     for (let i = 0; i < this.dataReceived.length; i++) {
-      if(this.dataReceived[i].valeur_lu>this.seuil)
+      if(this.dataReceived[i]>this.seuil)
       {
         newPath += "M" + i*pas + " 0 L" + i*pas + " 36 L" + (i+1)*pas +  " 36 L " + (i+1)*pas +" 0 Z";
       }
@@ -192,74 +191,45 @@ export class AcquisitionPage {
   alert.present();
  }
 
-  //simulation of data
-  startAcquisition2(){
-
-    this.dataReceived = [];
-    //this.lineChart.data.datasets[0].data=[];
-    //this.lineChart.data.labels=[];
+  // //simulation of data
+  // startAcquisition2(){
+  //   this.dataReceived = [];
+  //   //this.lineChart.data.datasets[0].data=[];
+  //   //this.lineChart.data.labels=[];
     
-    for (let index = 0; index < this.nbElements; index++) {
-      let data = (Math.floor(Math.random() * Math.floor(100)) +(index-30));
-      this.dataReceived.push(data);
-      //this.lineChart.data.datasets[0].data.push(data);
-      //this.lineChart.data.labels.push(index);
-      this.lineChart.data.datasets[0].data[index] = data;
-      this.lineChart.data.labels[index] = index;
-      this.lineChart.update();
-    }
-    this.fillColorSpecter();
-
-    //console.log(this.dataReceived);
-  }
+  //   for (let index = 0; index < this.nbElements; index++) {
+  //     let data = (Math.floor(Math.random() * Math.floor(100)) +(index-30));
+  //     this.dataReceived.push(data);
+  //     //this.lineChart.data.datasets[0].data.push(data);
+  //     //this.lineChart.data.labels.push(index);
+  //     this.lineChart.data.datasets[0].data[index] = data;
+  //     this.lineChart.data.labels[index] = index;
+  //     this.lineChart.update();
+      
+  //   }
+  //   this.fillColorSpecter();
+  //   //console.log(this.dataReceived);
+  // }
 
 
   startAcquisition(){
-    var loading = this.loadingCtrl.create({
-      spinner: 'crescent',
-      content: 'Acquisition en cours ...'
-    });
-
-    loading.present();
-
-    this.saver.getCalibValues().subscribe(result=> {
-
-      var pos_moteur = result.pos_moteur;
-      var longueur_onde = result.longueur_onde;
-      var dataLigne = [];
-      
-      while(this.dataReceived == [])
-      {
-        this.bluetoothSerial.write("acq").then(success => {
-          this.bluetoothSerial.readUntil('\n').then((data: any) => {
-            this.bluetoothSerial.read().then((data:any) => {
-            console.log(data);
-            dataLigne = data.split(',');
-            var pos_moteur_lu = dataLigne[0];
-            var valeur_lu = dataLigne[1];
-
-            console.log(this.dataReceived);
-              this.dataReceived.push({
-                  longueur_onde_lu : parseFloat(pos_moteur_lu) * longueur_onde / pos_moteur,
-                  valeur_lu : parseFloat(valeur_lu) /4096*100
-              })
-            console.log(this.dataReceived);
-    
-            this.bluetoothSerial.clear();
-            this.fillGraph();
-            this.isSaved = false;
-            loading.dismiss();
-          })
-          });
-          this.showToast("Data received",1000);
-        }, error => {
-          this.showToast(error,1000)
+    this.bluetoothSerial.write("acq").then(success => {
+      this.bluetoothSerial.readUntil('\n').then((data: any) => {
+        console.log(data);
+        this.dataReceived = data.split(',');
+        console.log(this.dataReceived);
+        this.dataReceived.forEach(function(element) {
+          element = parseFloat(element);
         });
-      }
+        console.log(this.dataReceived);
 
-    })
-
-    
+        this.bluetoothSerial.clear();
+        this.fillGraph();
+      });
+      this.showToast("Data received",1000);
+    }, error => {
+      this.showToast(error,1000)
+    });
     
   }
 
