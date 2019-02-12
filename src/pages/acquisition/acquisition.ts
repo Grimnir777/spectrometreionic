@@ -122,8 +122,8 @@ export class AcquisitionPage {
 
  fillGraph(){
   for (let index = 0; index < this.dataReceived.length; index++) {
-    this.lineChart.data.datasets[0].data[index] = this.dataReceived[index];
-    this.lineChart.data.labels[index] = index;
+    this.lineChart.data.datasets[0].data[index] = this.dataReceived[index].valeur_lu;
+    this.lineChart.data.labels[index] = this.dataReceived[index].longueur_onde_lu;
     this.lineChart.update();
   }
   //this.fillColorSpecter();
@@ -136,7 +136,7 @@ export class AcquisitionPage {
     let newPath = "";
 
     for (let i = 0; i < this.dataReceived.length; i++) {
-      if(this.dataReceived[i]>this.seuil)
+      if(this.dataReceived[i].valeur_lu>this.seuil)
       {
         newPath += "M" + i*pas + " 0 L" + i*pas + " 36 L" + (i+1)*pas +  " 36 L " + (i+1)*pas +" 0 Z";
       }
@@ -222,28 +222,43 @@ export class AcquisitionPage {
 
     loading.present();
 
-    while(this.dataReceived == [])
-    {
-      this.bluetoothSerial.write("acq").then(success => {
-        this.bluetoothSerial.readUntil('\n').then((data: any) => {
-          console.log(data);
-          this.dataReceived = data.split(',');
-          console.log(this.dataReceived);
-          this.dataReceived.forEach(function(element) {
-            element = parseFloat(element);
+    this.saver.getCalibValues().subscribe(result=> {
+
+      var pos_moteur = result.pos_moteur;
+      var longueur_onde = result.longueur_onde;
+      var dataLigne = [];
+      
+      while(this.dataReceived == [])
+      {
+        this.bluetoothSerial.write("acq").then(success => {
+          this.bluetoothSerial.readUntil('\n').then((data: any) => {
+            this.bluetoothSerial.read().then((data:any) => {
+            console.log(data);
+            dataLigne = data.split(',');
+            var pos_moteur_lu = dataLigne[0];
+            var valeur_lu = dataLigne[1];
+
+            console.log(this.dataReceived);
+              this.dataReceived.push({
+                  longueur_onde_lu : parseFloat(pos_moteur_lu) * longueur_onde / pos_moteur,
+                  valeur_lu : parseFloat(valeur_lu) /4096*100
+              })
+            console.log(this.dataReceived);
+    
+            this.bluetoothSerial.clear();
+            this.fillGraph();
+            this.isSaved = false;
+            loading.dismiss();
+          })
           });
-          console.log(this.dataReceived);
-  
-          this.bluetoothSerial.clear();
-          this.fillGraph();
-          this.isSaved = false;
-          loading.dismiss();
+          this.showToast("Data received",1000);
+        }, error => {
+          this.showToast(error,1000)
         });
-        this.showToast("Data received",1000);
-      }, error => {
-        this.showToast(error,1000)
-      });
-    }
+      }
+
+    })
+
     
     
   }
