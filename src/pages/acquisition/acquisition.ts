@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { NavController, NavParams, ToastController, AlertController  } from 'ionic-angular';
+import { NavController, NavParams, ToastController, AlertController, LoadingController  } from 'ionic-angular';
 import { BluetoothSerial } from "@ionic-native/bluetooth-serial";
 import { File } from "@ionic-native/file";
 
@@ -31,6 +31,8 @@ export class AcquisitionPage {
   colorSpecterWidth : number;
   seuil : number = 70;
 
+  indexCurrentR : number = 0;
+
   constructor(
     public navCtrl: NavController,
     private toastCtrl : ToastController,
@@ -38,7 +40,8 @@ export class AcquisitionPage {
     public navParams: NavParams, 
     public saver: SaverProvider,
     private alertCtrl: AlertController,
-    private file: File) 
+    private file: File,
+    public loadingCtrl: LoadingController) 
   {
   }
   
@@ -83,25 +86,26 @@ export class AcquisitionPage {
       labels: [],
       datasets: [
           {
-              fill: false,
-              lineTension: 0.1,
-              backgroundColor: "rgba(75,192,192,0.4)",
-              borderColor: "rgba(75,192,192,1)",
-              borderCapStyle: 'butt',
-              borderDash: [],
-              borderDashOffset: 0.0,
-              borderJoinStyle: 'miter',
-              pointBorderColor: "rgba(75,192,192,1)",
-              pointBackgroundColor: "#fff",
-              pointBorderWidth: 1,
-              pointHoverRadius: 5,
-              pointHoverBackgroundColor: "rgba(75,192,192,1)",
-              pointHoverBorderColor: "rgba(220,220,220,1)",
-              pointHoverBorderWidth: 2,
-              pointRadius: 1,
-              pointHitRadius: 10,
-              data: [],
-              spanGaps: false,
+            label: 'Nouvelle acquisition',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "rgba(75,192,192,1)",
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgba(75,192,192,1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data: [],
+            spanGaps: false,
           }
       ]
     },
@@ -213,20 +217,32 @@ export class AcquisitionPage {
 
 
   startAcquisition(){
-    this.bluetoothSerial.write("acq").then(success => {
-      this.bluetoothSerial.readUntil('\n').then((data: any) => {
-        console.log(data);
-        this.dataReceived = data.split(',');
-        console.log(this.dataReceived);
-        this.dataReceived.forEach(function(element) {
-          element = parseFloat(element);
-        });
-        console.log(this.dataReceived);
+    this.isNewAcq = true;
+    this.isSaved = false;
 
-        this.bluetoothSerial.clear();
-        this.fillGraph();
+    var loading = this.loadingCtrl.create({
+      spinner: 'crescent',
+      content: 'Acquisition en cours'
+    });
+
+    loading.present();
+
+    this.bluetoothSerial.write("acq").then(success => {
+      this.indexCurrentR = 0;
+      this.dataReceived = [];
+      this.bluetoothSerial.subscribe('\n').subscribe((data:any)=>{
+
+        console.log(data);
+        this.dataReceived.push(parseFloat(data));
+        this.indexCurrentR++;
+        console.log(this.indexCurrentR);
+        if(this.indexCurrentR >= 201)
+        {
+          loading.dismiss();
+          console.log(this.dataReceived);
+          this.fillGraph();
+        }
       });
-      this.showToast("Data received",1000);
     }, error => {
       this.showToast(error,1000)
     });
