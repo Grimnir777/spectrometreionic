@@ -17,8 +17,15 @@ export class ListAcquisitionsPage {
   ionViewWillEnter(){
     this.saver.getAllSpecters().subscribe( specters =>{
       this.allSpecters = specters;
+      for (let index = 0; index < this.allSpecters.length; index++) {
+        var event = new Date(this.allSpecters[index].date);
+        var options = { year: 'numeric', month: 'short', day: 'numeric',hour:'numeric',minute:'numeric' };
+        this.allSpecters[index].dateStr = event.toLocaleDateString('fr-FR', options);
+      }
       console.log(this.allSpecters);
     });
+
+
   }
 
   openAcq(specter){

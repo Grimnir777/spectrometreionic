@@ -72,6 +72,7 @@ export class AcquisitionPage {
       this.isSaved = false;
       this.pageTitle = "Nouvelle acquisition";
     }
+    console.log(this.isSaved);
 
     //console.log(this.colorSpecter.nativeElement.getAttribute('width'));
     //console.log(this.colorSpecter.nativeElement.getAttribute('height'));
@@ -226,7 +227,7 @@ export class AcquisitionPage {
     });
 
     loading.present();
-
+    this.bluetoothSerial.clear();
     this.bluetoothSerial.write("acq").then(success => {
       this.indexCurrentR = 0;
       this.dataReceived = [];
