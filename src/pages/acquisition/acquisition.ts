@@ -1,6 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
 import { NavController, NavParams, ToastController, AlertController, LoadingController  } from 'ionic-angular';
-import { BluetoothSerial } from "@ionic-native/bluetooth-serial";
 import { File } from "@ionic-native/file";
 
 import { Chart } from 'chart.js';
@@ -36,7 +35,6 @@ export class AcquisitionPage {
   constructor(
     public navCtrl: NavController,
     private toastCtrl : ToastController,
-    private bluetoothSerial : BluetoothSerial,
     public navParams: NavParams, 
     public saver: SaverProvider,
     private alertCtrl: AlertController,
