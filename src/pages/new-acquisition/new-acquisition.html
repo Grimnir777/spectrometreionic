@@ -1,16 +1,27 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      {{pageTitle}}
+      Nouvelle acquisition
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
+  <p *ngIf="!isConnected && isNewAcq">{{errorMsg}}</p>
+  
+  <div *ngIf="isConnected">
+    <button ion-button full class="submit-button" *ngIf="isNewAcq" (click)="startAcquisition()">
+      <ion-icon name="send"></ion-icon>Lancer une nouvelle acquisition
+    </button>
 
-  <button ion-button full class="submit-button" *ngIf="isSaved" (click)="saveAsCsv()">
-    <ion-icon name="star"></ion-icon>Sauvegarder en CSV
-  </button>
+    <button ion-button full class="submit-button" *ngIf="!isSaved" (click)="saveSpecter()">
+      <ion-icon name="star"></ion-icon>Sauvegarder
+    </button>
+  
+    <button ion-button full class="submit-button" *ngIf="isSaved" (click)="saveAsCsv()">
+      <ion-icon name="star"></ion-icon>Sauvegarder en CSV
+    </button>
+  </div>
   
   <ion-card>
     <ion-card-content>

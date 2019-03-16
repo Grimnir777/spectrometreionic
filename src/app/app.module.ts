@@ -4,6 +4,8 @@ import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 
 import { AcquisitionPage } from '../pages/acquisition/acquisition';
+import { NewAcquisitionPage } from '../pages/new-acquisition/new-acquisition';
+
 import { ListAcquisitionsPage } from '../pages/listAcquisitions/listAcquisitions';
 import { CalibrationPage } from "../pages/calibration/calibration";
 import { SettingsPage } from '../pages/settings/settings';
@@ -21,6 +23,7 @@ import { File } from "@ionic-native/file";
   declarations: [
     MyApp,
     AcquisitionPage,
+    NewAcquisitionPage,
     ListAcquisitionsPage,
     CalibrationPage,
     SettingsPage,
@@ -35,6 +38,7 @@ import { File } from "@ionic-native/file";
   entryComponents: [
     MyApp,
     AcquisitionPage,
+    NewAcquisitionPage,
     ListAcquisitionsPage,
     CalibrationPage,
     SettingsPage,

@@ -1,27 +1,28 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component,ViewChild } from '@angular/core';
 import { NavController, NavParams, ToastController, AlertController, LoadingController  } from 'ionic-angular';
 import { BluetoothSerial } from "@ionic-native/bluetooth-serial";
 import { File } from "@ionic-native/file";
-
+import { SaverProvider } from "../../providers/saver/saver";
 import { Chart } from 'chart.js';
 
-import { SaverProvider } from "../../providers/saver/saver";
 
 @Component({
-  selector: 'page-acquisition',
-  templateUrl: 'acquisition.html'
+  selector: 'page-new-acquisition',
+  templateUrl: 'new-acquisition.html',
 })
-export class AcquisitionPage {
+export class NewAcquisitionPage {
   @ViewChild('lineCanvas') lineCanvas;
   @ViewChild('absorptionPath') absorptionPath;
   @ViewChild('colorSpecter') colorSpecter;
 
+
   errorMsg : string = "Aucune erreur";
   isConnected : boolean = false;
 
+
   isSaved : boolean;
   isNewAcq : boolean;
-  pageTitle : string;
+
 
   lineChart: any;
   dataReceived : any;
@@ -32,6 +33,7 @@ export class AcquisitionPage {
   seuil : number = 70;
 
   indexCurrentR : number = 0;
+
 
   constructor(
     public navCtrl: NavController,
@@ -45,29 +47,20 @@ export class AcquisitionPage {
   {
   }
 
+  ionViewWillEnter(){
+    this.bluetoothSerial.isConnected().then(() =>{
+      this.isConnected = true;
+    },error=>{
+      this.isConnected = false;
+      this.errorMsg = "Veuillez vous connecter au module bluetooth dans la page paramètres";
+    });
+  }
 
+  
   ionViewDidEnter() {
     this.initGraph();
-
-    this.specterData = this.navParams.get('sp');
-    if(this.specterData!=null)
-    {
-      this.dataReceived = this.specterData.listValue;
-      console.log(this.specterData);
-      this.fillGraph();
-      this.pageTitle = this.specterData.name;
-      this.isSaved = true;
-      this.isNewAcq = false;
-    }
-    else{
-      this.errorMsg = "Erreur au chargement du spectre";
-    }
-    console.log(this.isSaved);
-
-    //console.log(this.colorSpecter.nativeElement.getAttribute('width'));
-    //console.log(this.colorSpecter.nativeElement.getAttribute('height'));
-
-    //this.absorptionPath.nativeElement.setAttribute('d',"M150 0 L150 36 L200 36 L 200 0 Z M250 0 L250 36 L350 36 L 350 0 Z");
+    this.isNewAcq = true;      
+    this.isSaved = false;
  }
 
  initGraph(){
@@ -120,13 +113,13 @@ export class AcquisitionPage {
     this.lineChart.data.labels[index] = index;
     this.lineChart.update();
   }
-   this.fillColorSpecter();
+  this.fillColorSpecter();
  }
 
  fillColorSpecter(){
     this.colorSpecterWidth =  this.colorSpecter.nativeElement.getAttribute('viewBox').split(" ")[2];
     let pas = this.colorSpecterWidth / this.dataReceived.length;
-    console.log(pas);
+    
     let newPath = "";
 
     for (let i = 0; i < this.dataReceived.length; i++) {
@@ -138,6 +131,88 @@ export class AcquisitionPage {
 
     this.absorptionPath.nativeElement.setAttribute('d',newPath);
   }
+
+
+
+ saveSpecter(){
+  let alert = this.alertCtrl.create({
+    title: 'Sauvegarde du graphe actuel',
+    message: 'Entrez un nom pour votre nouveau graphe',
+    inputs: [
+      {
+        name: 'title',
+        placeholder: 'titre'
+      },
+    ],
+    buttons: [
+      {
+        text: 'Annuler',
+        handler: () => {
+          console.log('Cancel clicked');
+        }
+      },
+      {
+        text: 'Sauvegarder',
+        handler: (data) => {
+          console.log('Saved clicked');
+          if(data.title!=null && data.title!=""){
+            let acDate = Date.now();
+            let newName = data.title;
+            let newSpecter = {
+              id : newName + acDate,
+              date : acDate,
+              name : newName,
+              listValue : this.dataReceived
+            };
+            this.specterData = newSpecter;
+            console.log(newSpecter);
+            this.saver.addSpecter(newSpecter);
+            this.showToast("Votre graphe (" + data.title + ") a bien été sauvegardé",2500);
+            this.isSaved = true;
+          }
+          
+        }
+      }
+    ]
+  });
+
+  alert.present();
+ }
+
+
+  startAcquisition(){
+    this.isNewAcq = true;
+    this.isSaved = false;
+
+    var loading = this.loadingCtrl.create({
+      spinner: 'crescent',
+      content: 'Acquisition en cours'
+    });
+
+    loading.present();
+    this.bluetoothSerial.clear();
+    this.bluetoothSerial.write("acq").then(success => {
+      this.indexCurrentR = 0;
+      this.dataReceived = [];
+      this.bluetoothSerial.subscribe('\n').subscribe((data:any)=>{
+
+        console.log(data);
+        this.dataReceived.push(parseFloat(data));
+        this.indexCurrentR++;
+        console.log(this.indexCurrentR);
+        if(this.indexCurrentR >= 1000)
+        {
+          loading.dismiss();
+          console.log(this.dataReceived);
+          this.fillGraph();
+        }
+      });
+    }, error => {
+      this.showToast(error,1000)
+    });
+    
+  }
+
 
   saveAsCsv() {
     let alert = this.alertCtrl.create({
