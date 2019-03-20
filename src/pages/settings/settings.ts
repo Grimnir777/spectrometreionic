@@ -69,6 +69,8 @@ export class SettingsPage {
   selectDevice(){
     var loading = this.loadingCtrl.create({
       spinner: 'crescent',
+      showBackdrop: false,
+      cssClass: "loading-ctrl",
       content: 'Connexion en cours'
     });
 
@@ -88,6 +90,7 @@ export class SettingsPage {
     },
     error=>{
       this.showToast("Connexion impossible");
+      loading.dismiss();
     })
   }
 

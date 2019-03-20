@@ -6,6 +6,8 @@ import { SaverProvider } from "../../providers/saver/saver";
 import { Chart } from 'chart.js';
 
 
+const NB_ACQUISITIONS = 400;
+
 @Component({
   selector: 'page-new-acquisition',
   templateUrl: 'new-acquisition.html',
@@ -30,6 +32,7 @@ export class NewAcquisitionPage {
 
   nbElements : number = 100;
   colorSpecterWidth : number;
+  colorSpecterPas : number;
   seuil : number = 70;
 
   indexCurrentR : number = 0;
@@ -61,6 +64,9 @@ export class NewAcquisitionPage {
     this.initGraph();
     this.isNewAcq = true;      
     this.isSaved = false;
+    // this.colorSpecterWidth =  this.colorSpecter.nativeElement.getAttribute('viewBox').split(" ")[2];
+    // this.colorSpecterPas = this.colorSpecterWidth / this.dataReceived.length;
+
  }
 
  initGraph(){
@@ -99,12 +105,28 @@ export class NewAcquisitionPage {
           ticks: {
             min: 0,
             max: 500,
-            stepSize: 100
+            stepSize: 2
           }
         }]
       }
     }
   });
+ }
+
+ updateGraph(indexGraph){
+  this.lineChart.data.datasets[0].data[indexGraph] = this.dataReceived[indexGraph];
+  this.lineChart.data.labels[indexGraph] = indexGraph;
+  this.lineChart.update();
+  // this.updateColorSpecter(indexGraph);
+ }
+ updateColorSpecter(indexGraph){
+  let newPath = this.absorptionPath.nativeElement.getAttribute('d');
+  if(this.dataReceived[indexGraph]>this.seuil)
+  {
+    newPath += "M" + indexGraph*this.colorSpecterPas + " 0 L" + indexGraph*this.colorSpecterPas + " 36 L" + (indexGraph+1)*this.colorSpecterPas +  " 36 L " + (indexGraph+1)*this.colorSpecterPas +" 0 Z";
+  }
+  this.absorptionPath.nativeElement.setAttribute('d',newPath);
+
  }
 
  fillGraph(){
@@ -117,11 +139,11 @@ export class NewAcquisitionPage {
  }
 
  fillColorSpecter(){
-    this.colorSpecterWidth =  this.colorSpecter.nativeElement.getAttribute('viewBox').split(" ")[2];
-    let pas = this.colorSpecterWidth / this.dataReceived.length;
+     this.colorSpecterWidth =  this.colorSpecter.nativeElement.getAttribute('viewBox').split(" ")[2];
+     let pas = this.colorSpecterWidth / this.dataReceived.length;
     
     let newPath = "";
-
+    
     for (let i = 0; i < this.dataReceived.length; i++) {
       if(this.dataReceived[i]>this.seuil)
       {
@@ -183,28 +205,35 @@ export class NewAcquisitionPage {
   startAcquisition(){
     this.isNewAcq = true;
     this.isSaved = false;
-
+    this.dataReceived=[]
+    for (let i = 0; i < NB_ACQUISITIONS; i++) {
+      this.dataReceived.push(0.0);
+    }
     var loading = this.loadingCtrl.create({
       spinner: 'crescent',
       content: 'Acquisition en cours'
     });
+    
 
     loading.present();
     this.bluetoothSerial.clear();
     this.bluetoothSerial.write("acq").then(success => {
       this.indexCurrentR = 0;
-      this.dataReceived = [];
       this.bluetoothSerial.subscribe('\n').subscribe((data:any)=>{
-
-        console.log(data);
-        this.dataReceived.push(parseFloat(data));
-        this.indexCurrentR++;
         console.log(this.indexCurrentR);
-        if(this.indexCurrentR >= 1000)
+        console.log(data);
+        //this.dataReceived.push(parseFloat(data));
+        this.dataReceived[this.indexCurrentR] = parseFloat(data);
+        this.updateGraph(NB_ACQUISITIONS - this.indexCurrentR);
+        this.indexCurrentR++;
+        
+        if(this.indexCurrentR >= NB_ACQUISITIONS)
         {
           loading.dismiss();
           console.log(this.dataReceived);
-          this.fillGraph();
+          console.log(this.lineChart);
+          // this.fillGraph();
+          this.fillColorSpecter();
         }
       });
     }, error => {
@@ -238,7 +267,7 @@ export class NewAcquisitionPage {
             if(data.title!=null && data.title!=""){
               var csv: any = '';
     
-              for (let index = 0; index < this.nbElements; index++) {
+              for (let index = 0; index < NB_ACQUISITIONS; index++) {
                 csv += index + ";" + this.dataReceived[index] + ";\r\n";
               }
               var fileName: any = data.title + ".csv"

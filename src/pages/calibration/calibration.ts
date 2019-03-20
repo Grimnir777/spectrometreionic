@@ -25,6 +25,26 @@ export class CalibrationPage {
   ionViewDidLoad() {
   }
 
+  turnLeft(){
+    this.bluetoothSerial.clear();
+    this.bluetoothSerial.write("left").then(success => {
+    }, error => {
+      this.showToast(error,1000)
+    });
+  }
+  turnRight(){
+    this.bluetoothSerial.clear();
+    this.bluetoothSerial.write("right").then(success => {
+    }, error => {
+      this.showToast(error,1000)
+    });
+  }
+
+
+
+
+
+
   startCalibration(){
     var loading = this.loadingCtrl.create({
       spinner: 'crescent',
@@ -44,7 +64,7 @@ export class CalibrationPage {
           //let valMax = Math.max(...this.dataReceived);
           let indexOfMax = this.indexOfMax(this.dataReceived)
           let valCalib = {
-            pos_moteur : this.dataReceived[indexOfMax],
+            pos_moteur : indexOfMax,
             longueur_onde : LONG_ONDE_ROUGE
           }
           this.saver.setCalibValues(valCalib)
