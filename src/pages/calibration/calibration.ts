@@ -43,12 +43,8 @@ export class CalibrationPage {
     this.saver.getCalibValues().subscribe( calibValues =>{
       this.valCalib = calibValues;
       console.log(this.valCalib);
-    },error=>{
-      let initVal = {
-        POS_ROUGE : 220,
-        POS_VERT:64
-      }
-      this.saver.setCalibValues(initVal);
+      this.posRougeSaved = this.valCalib['POS_ROUGE'];
+      this.posVertSaved = this.valCalib['POS_VERT'];
     });
   }
 

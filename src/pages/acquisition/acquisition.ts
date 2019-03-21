@@ -14,6 +14,10 @@ export class AcquisitionPage {
   @ViewChild('lineCanvas') lineCanvas;
   @ViewChild('absorptionPath') absorptionPath;
   @ViewChild('colorSpecter') colorSpecter;
+  
+
+  @ViewChild('lineCanvas2') lineCanvas2;
+
 
   errorMsg : string = "Aucune erreur";
   isConnected : boolean = false;
@@ -23,12 +27,15 @@ export class AcquisitionPage {
   pageTitle : string;
 
   lineChart: any;
+  lineChart2: any;
+
+  dataNormalized : any;
+
   dataReceived : any;
   specterData: any;
 
-  nbElements : number = 100;
   colorSpecterWidth : number;
-  seuil : number = 70;
+  seuil : number = 20;
 
   indexCurrentR : number = 0;
 
@@ -47,12 +54,14 @@ export class AcquisitionPage {
   ionViewDidEnter() {
     this.initGraph();
 
+
     this.specterData = this.navParams.get('sp');
     if(this.specterData!=null)
     {
       this.dataReceived = this.specterData.listValue;
       console.log(this.specterData);
       this.fillGraph();
+      this.fillGraphNormalized();
       this.pageTitle = this.specterData.name;
       this.isSaved = true;
       this.isNewAcq = false;
@@ -110,6 +119,96 @@ export class AcquisitionPage {
       }
     }
   });
+
+
+
+  this.lineChart2 = new Chart(this.lineCanvas2.nativeElement, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [
+          {
+            label: 'Graphique normalisé',
+            fill: false,
+            lineTension: 0.1,
+            backgroundColor: "rgba(75,192,192,0.4)",
+            borderColor: "rgba(75,192,192,1)",
+            borderCapStyle: 'butt',
+            borderDash: [],
+            borderDashOffset: 0.0,
+            borderJoinStyle: 'miter',
+            pointBorderColor: "rgba(75,192,192,1)",
+            pointBackgroundColor: "#fff",
+            pointBorderWidth: 1,
+            pointHoverRadius: 5,
+            pointHoverBackgroundColor: "rgba(75,192,192,1)",
+            pointHoverBorderColor: "rgba(220,220,220,1)",
+            pointHoverBorderWidth: 2,
+            pointRadius: 1,
+            pointHitRadius: 10,
+            data: [],
+            spanGaps: false,
+          }
+      ]
+    },
+    options: {
+      scales: {
+        xAxes: [{
+          ticks: {
+            min: 0,
+            max: 1000,
+            stepSize: 100
+          }
+        }]
+      }
+    }
+  });
+ }
+
+ fillGraphNormalized(){
+   this.saver.getCalibValues().subscribe(calibValues=>{
+    var posRouge = calibValues['POS_ROUGE'];
+    var posVert = calibValues['POS_VERT'];
+    var pas = (posRouge - posVert)/ (100.2);
+    var deltaInfVert = posVert - Math.round((532.8-430) / pas);
+    var deltaSupVert = posVert + Math.round((750-532.8) / pas);
+    var total = deltaSupVert - deltaInfVert;
+
+    console.log(deltaInfVert);
+    console.log(deltaSupVert);
+
+    var newPath = "";
+    this.colorSpecterWidth =  this.colorSpecter.nativeElement.getAttribute('viewBox').split(" ")[2];
+    var pasColorSpecter = this.colorSpecterWidth / total;
+
+    for (let index = deltaInfVert ; index < deltaSupVert ; index++) {
+      var value = 10;
+      if(index>=0 && index <= this.dataReceived.length){
+        value = this.dataReceived[index];
+      }
+
+      if(this.dataReceived[index]>this.seuil)
+      {
+        newPath += "M" + (total - index)*pasColorSpecter + " 0 L" + (total-index)*pasColorSpecter + " 36 L" + ((total-index)+1)*pasColorSpecter +  " 36 L " + ((total-index)+1)*pasColorSpecter +" 0 Z";
+      }
+      
+      let nm = (index - posVert)* pas + 532.8 ;
+      this.lineChart2.data.datasets[0].data[total-index] = value;
+      this.lineChart2.data.labels[index] = nm.toFixed(2);
+      //nm = index * LONG_OND_VERT / PAS_VERT
+      this.lineChart2.update();
+    } 
+
+
+
+    
+    
+
+    this.absorptionPath.nativeElement.setAttribute('d',newPath);
+
+    //  POS_VERT:64
+    //  POS_ROUGE : 220,
+   })
  }
 
  fillGraph(){
@@ -119,7 +218,7 @@ export class AcquisitionPage {
     //nm = index * LONG_OND_VERT / PAS_VERT
     this.lineChart.update();
   }
-   this.fillColorSpecter();
+  //  this.fillColorSpecter();
  }
 
  fillColorSpecter(){

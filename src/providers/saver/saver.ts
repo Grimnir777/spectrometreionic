@@ -99,7 +99,13 @@ export class SaverProvider {
         }
         else
         {
-          console.log("error");
+          console.log('init');
+          let cabVal = {
+            POS_ROUGE : 220,
+            POS_VERT:64
+          };
+          this.storage.set(CALIB_VALUES_DATA_KEY,JSON.stringify(cabVal));
+          obs.next(cabVal);
           obs.complete();
         }
       });
