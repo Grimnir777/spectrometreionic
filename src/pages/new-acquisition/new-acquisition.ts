@@ -6,7 +6,7 @@ import { SaverProvider } from "../../providers/saver/saver";
 import { Chart } from 'chart.js';
 
 
-const NB_ACQUISITIONS = 400;
+const NB_ACQUISITIONS = 600;
 
 @Component({
   selector: 'page-new-acquisition',
@@ -30,7 +30,6 @@ export class NewAcquisitionPage {
   dataReceived : any;
   specterData: any;
 
-  nbElements : number = 100;
   colorSpecterWidth : number;
   colorSpecterPas : number;
   seuil : number = 70;
@@ -104,7 +103,7 @@ export class NewAcquisitionPage {
         xAxes: [{
           ticks: {
             min: 0,
-            max: 500,
+            max: 1000,
             stepSize: 2
           }
         }]
@@ -223,7 +222,7 @@ export class NewAcquisitionPage {
         console.log(this.indexCurrentR);
         console.log(data);
         //this.dataReceived.push(parseFloat(data));
-        this.dataReceived[this.indexCurrentR] = parseFloat(data);
+        this.dataReceived[NB_ACQUISITIONS - this.indexCurrentR] = parseFloat(data);
         this.updateGraph(NB_ACQUISITIONS - this.indexCurrentR);
         this.indexCurrentR++;
         

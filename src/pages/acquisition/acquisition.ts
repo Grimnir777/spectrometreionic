@@ -103,7 +103,7 @@ export class AcquisitionPage {
         xAxes: [{
           ticks: {
             min: 0,
-            max: 500,
+            max: 1000,
             stepSize: 100
           }
         }]
@@ -116,6 +116,7 @@ export class AcquisitionPage {
   for (let index = 0; index < this.dataReceived.length; index++) {
     this.lineChart.data.datasets[0].data[index] = this.dataReceived[index];
     this.lineChart.data.labels[index] = index;
+    //nm = index * LONG_OND_VERT / PAS_VERT
     this.lineChart.update();
   }
    this.fillColorSpecter();
@@ -161,7 +162,7 @@ export class AcquisitionPage {
             if(data.title!=null && data.title!=""){
               var csv: any = '';
     
-              for (let index = 0; index < this.nbElements; index++) {
+              for (let index = 0; index < this.dataReceived.length; index++) {
                 csv += index + ";" + this.dataReceived[index] + ";\r\n";
               }
               var fileName: any = data.title + ".csv"

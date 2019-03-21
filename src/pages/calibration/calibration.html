@@ -6,13 +6,45 @@
 
 <ion-content padding>
   <h1>Contrôle manuel du moteur</h1>
-
+  <ion-item>
+    <ion-range min="1" step="1" max="30" from="10" pin="true" [(ngModel)]="cmdPas">
+      <ion-label range-left class="small-text">1</ion-label>
+      <ion-label range-right>30</ion-label>
+    </ion-range>
+  </ion-item>
   <button ion-button full  (click)="turnLeft()">
-    <ion-icon name="arrow-dropleft-circle"></ion-icon>Tourner à gauche 
+    <ion-icon name="arrow-dropleft-circle"></ion-icon>&nbsp;Tourner à gauche 
   </button>
 
   <button ion-button full (click)="turnRight()">
-    <ion-icon name="arrow-dropright-circle"></ion-icon>Tourner à droite 
+    <ion-icon name="arrow-dropright-circle"></ion-icon>&nbsp;Tourner à droite 
   </button>
+
+
+  <button ion-button full (click)="raz()">
+    <ion-icon name="refresh-circle"></ion-icon>&nbsp;RAZ
+  </button>
+
+
+  <h1>Calibration automatique</h1>
+
+  <button ion-button full  (click)="calibrationVert()">
+    <ion-icon name="arrow-dropleft-circle"></ion-icon>&nbsp;Acquisition avec laser vert
+  </button>
+  <div>
+    <h3>Valeur actuelle du vert :</h3>
+    <p>Longueur d'onde : 532.8nm</p>
+    <p>Position enregistrée {{posVertSaved}}</p>
+  </div>
+  
+  <button ion-button full  (click)="calibrationRouge()">
+    <ion-icon name="arrow-dropleft-circle"></ion-icon>&nbsp;Acquisition avec laser rouge
+  </button>
+
+  <div>
+    <h3>Valeur actuelle du rouge :</h3>
+    <p>Longueur d'onde : 633nm</p>
+    <p>Position enregistrée {{posRougeSaved}}</p>
+  </div>
 
 </ion-content>

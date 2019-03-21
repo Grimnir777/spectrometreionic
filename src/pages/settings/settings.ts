@@ -9,6 +9,7 @@ import { BluetoothSerial } from "@ionic-native/bluetooth-serial";
 
 export class SettingsPage {
   listToggle : boolean = false;
+  isConnected: boolean = false;
   pairedList : pairedlist;
   pairedDeviceID : number = 0;
   unpairedList : pairedlist;
@@ -24,6 +25,13 @@ export class SettingsPage {
     ) 
   {
     this.checkBluetoothEnable();
+    this.bluetoothSerial.isConnected().then(success=>{
+      console.log("connected");
+      this.isConnected = true;
+    },error => {
+      console.log("not connected")
+      this.isConnected = false;
+    })
   }
 
   enableBluetooth()
@@ -87,10 +95,12 @@ export class SettingsPage {
     this.bluetoothSerial.connect(address).subscribe(success => {
       this.showToast("Connexion réussie");
       loading.dismiss();
+      this.isConnected = true;
     },
     error=>{
       this.showToast("Connexion impossible");
       loading.dismiss();
+      this.isConnected = false;
     })
   }
 
@@ -115,6 +125,7 @@ export class SettingsPage {
   //onDisconnected
   deviceDisconnected() {
     this.bluetoothSerial.disconnect();
+    this.isConnected = false;
     this.showToast("Appareil déconnecté");
   }
 

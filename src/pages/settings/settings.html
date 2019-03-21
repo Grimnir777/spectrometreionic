@@ -12,7 +12,7 @@
       Activer le bluetooth
     </button>
 
-    <div *ngIf="bluetoothOn">
+    <div *ngIf="bluetoothOn && !isConnected">
       <!-- <button ion-button full class="submit-button" (click)="scanForUnpaired()">
         Ajout d'un nouvel appareil
       </button>
@@ -41,10 +41,14 @@
       </ion-row>
 
   
-      <button ion-button full class="submit-button" *ngIf="listToggle" (click)="selectDevice()">
+      <button ion-button full class="submit-button" (click)="selectDevice()" *ngIf="listToggle">
         <ion-icon name="bluetooth"></ion-icon>&nbsp;Se connecter à l'appareil sélectionné
       </button>
     </div>
+
+    <button ion-button full class="submit-button" (click)="deviceDisconnected()" *ngIf="isConnected">
+      Se déconnecter
+    </button>
     
     
   </ion-content>
