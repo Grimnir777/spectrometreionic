@@ -7,8 +7,8 @@ const LONG_ONDE_ROUGE = 638;
 
 const MIN_PAS_VERT = 100;
 const MAX_PAS_VERT = 200;
-const MIN_PAS_ROUGE = 0;
-const MAX_PAS_ROUGE = 100;
+const MIN_PAS_ROUGE = 200;
+const MAX_PAS_ROUGE = 400;
 
 
 const NB_ACQUISITIONS = 600;
